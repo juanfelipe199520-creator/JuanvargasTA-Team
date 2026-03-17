@@ -31,7 +31,7 @@ exports.handler = async function(event, context) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer sk-8fe9055889fe333becb5d8f8385fe28d68b843c846d36a8657d777ab420ca2c3'
+        'Authorization': 'Bearer sk-y0Kqgh-WQ8OC8kCvjA9b6g'
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
