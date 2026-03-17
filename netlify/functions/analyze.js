@@ -15,9 +15,18 @@ exports.handler = async function(event, context) {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
+  let body;
   try {
-    const body = JSON.parse(event.body);
+    body = JSON.parse(event.body);
+  } catch (e) {
+    return {
+      statusCode: 400,
+      headers: { 'Access-Control-Allow-Origin': '*' },
+      body: JSON.stringify({ error: { message: 'Invalid request body' } })
+    };
+  }
 
+  try {
     const response = await fetch('https://co-prod-litellm.nullmplatform.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -31,7 +40,26 @@ exports.handler = async function(event, context) {
       })
     });
 
-    const data = await response.json();
+    const rawText = await response.text();
+
+    let data;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e) {
+      return {
+        statusCode: 500,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: { message: 'LiteLLM returned: ' + rawText.substring(0, 300) } })
+      };
+    }
+
+    if (!response.ok) {
+      return {
+        statusCode: response.status,
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ error: { message: data.error?.message || 'LiteLLM error ' + response.status } })
+      };
+    }
 
     return {
       statusCode: 200,
@@ -41,11 +69,12 @@ exports.handler = async function(event, context) {
       },
       body: JSON.stringify(data)
     };
+
   } catch (err) {
     return {
       statusCode: 500,
       headers: { 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: { message: err.message } })
+      body: JSON.stringify({ error: { message: 'Function error: ' + err.message } })
     };
   }
 };
