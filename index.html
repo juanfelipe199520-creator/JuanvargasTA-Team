@@ -435,7 +435,7 @@ Priority: 1=Exceptional, 2=Strong, 3=Good, 4=Weak/below bar, 5=Poor/disqualifyin
     const res=await fetch('https://co-prod-litellm.nullmplatform.com/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer sk-y0Kqgh-WQ8OC8kCvjA9b6g'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,messages:[{role:'user',content:prompt}]})
+      body:JSON.stringify({model:'azure/gpt-4.1',max_tokens:1200,messages:[{role:'user',content:prompt}]})
     });
     if(!res.ok){
       const ed=await res.json().catch(()=>({}));
